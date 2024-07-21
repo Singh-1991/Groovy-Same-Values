@@ -1,0 +1,26 @@
+manifest_version: "1.0.0"
+project: "Hybrid Cloud ML"
+description: "Hybrid Cloud ML model development"
+version_info:
+  ML_model:
+    cloud_model:
+      name: "abc_model_v1.1.json"
+      version: "1.1.0"
+      date: "2024-06-02"
+      path: "s3://pnc-trial/same_hash_values.tar.gz"
+      md5: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      description: "The trained model file in the cloud environment."
+    onprem_model:
+      name: "onprem_model_001"
+      version: "1.1.0"
+      date: "2024-06-02"
+      path: "https://artifactory.tld/models/xgb_model_v1.1.json"
+      md5: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      description: "The trained model file moved to the on-premises environment."
+    cloud_control_output:
+      name: "control_output.json"
+      version: "1.1.0"
+      date: "2024-06-02"
+      path: "https://artifactory.tld/models/control_output_v1.1.json"
+      md5: "xxxxxxxxxxxxxxxxxxxxxx"
+      description: "The trained model file moved to the on-premises environment."
