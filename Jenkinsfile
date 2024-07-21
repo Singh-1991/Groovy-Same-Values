@@ -37,6 +37,9 @@ pipeline {
             steps {
                 container('awscli-image') {
                     script {
+                        def versionsManifest = readYaml file: 'versions_manifest.yml'
+                        def s3_path = versionsManifest.version_info.ML_model.cloud_model.path
+                        def tarball_name = s3_path.tokenize('/')[-1]                        
                         // Ensure PWD is correctly defined within the container
                         def PWD = sh(script: "echo \$(pwd)", returnStdout: true).trim()
                         
@@ -78,6 +81,12 @@ pipeline {
                     }
                 }
             }
-        }      
+        }
+
+        stage('Validation message'){
+            steps {
+                sh "echo Job Executed As Expected"
+            }
+        }
     }
 }  
