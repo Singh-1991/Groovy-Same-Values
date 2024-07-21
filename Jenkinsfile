@@ -55,7 +55,7 @@ pipeline {
                     checksumFile.readLines().each { line ->
                         def parts = line.split()
                         if (parts.size() >= 2) {
-                            def expectedHash = parts[0].trim()
+                            def expectedHash = null
                             def filename = parts[1].trim()
                             
                             // Calculate hash for each file except checksum.txt itself
@@ -65,18 +65,21 @@ pipeline {
                                 
                                 // Debugging output
                                 echo "Calculated Hash for ${filename}: ${calculatedHash}"
-                                echo "Expected Hash for ${filename}: ${expectedHash}"
+                                
+                                // Find expected hash for the current file
+                                checksumFile.each { line ->
+                                    if (line.startsWith("${filename}:")) {
+                                        expectedHash = line.split(":")[0].trim()
+                                    }
+                                }
+                                
+                                // Compare hashes
+                                if (expectedHash && expectedHash == calculatedHash) {
+                                    echo "Hash verification successful for ${filename}!"
+                                } else {
+                                    error "Verification failed: Hash mismatch for ${filename}. Expected: ${expectedHash}, Calculated: ${calculatedHash}"
+                                }
                             }
-                        }
-                    }
-                    
-                    // Compare calculated hashes with expected hashes
-                    calculatedHashes.each { filename, calculatedHash ->
-                        def expectedHash = checksumFile.find { it.contains(filename) }?.split()[0]?.trim()
-                        if (expectedHash && expectedHash == calculatedHash) {
-                            echo "Hash verification successful for ${filename}!"
-                        } else {
-                            error "Verification failed: Hash mismatch for ${filename}. Expected: ${expectedHash}, Calculated: ${calculatedHash}"
                         }
                     }
                 }
