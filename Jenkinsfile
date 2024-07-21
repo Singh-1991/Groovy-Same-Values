@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Code CheckOut') {
             steps{
-                git branch: 'main', credentialsId: 'GitHub_Credentials', url: 'https://github.com/Singh-1991/wonames-script.git'
+                git branch: 'main', credentialsId: 'GitHub_Credentials', url: 'https://github.com/Singh-1991/wnames-script.git'
             }
         }     
         
