@@ -48,8 +48,8 @@ pipeline {
                     """
                     
                     // Calculate and compare SHA256 hashes directly
-                    def calculatedModelHash = sh(script: "sha256sum \${PWD}/model_weights.json | awk '{print $1}'", returnStdout: true).trim()
-                    def calculatedOutputHash = sh(script: "sha256sum \${PWD}/control_output.txt | awk '{print $1}'", returnStdout: true).trim()
+                    def calculatedModelHash = sh(script: "sha256sum ${PWD}/model_weights.json | awk '{print \$1}'", returnStdout: true).trim()
+                    def calculatedOutputHash = sh(script: "sha256sum ${PWD}/control_output.txt | awk '{print \$1}'", returnStdout: true).trim()
                     
                     // Read checksums from checksum.txt
                     def checksumFile = readFile("${PWD}/checksum.txt")
