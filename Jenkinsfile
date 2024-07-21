@@ -6,13 +6,13 @@ pipeline {
     }
 
     stages {
-        stage('Code CheckOut') {
+        stage('Code Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'GitHub_Credentials', url: 'https://github.com/Singh-1991/wnames-script.git'
             }
-        }     
+        }
 
-        stage('Get artifact') {
+        stage('Get Artifact') {
             steps {
                 script {
                     def versionsManifest = readYaml file: 'versions_manifest.yml'
@@ -26,7 +26,7 @@ pipeline {
                         sh """
                             export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
                             export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-                            aws s3 cp ${s3_path} ${PWD} --debug
+                            aws s3 cp ${s3_path} ${PWD}/ --debug
                         """
                     }
                 }
@@ -55,7 +55,7 @@ pipeline {
                     checksumFile.readLines().each { checksumLine ->
                         def parts = checksumLine.split()
                         if (parts.size() >= 2) {
-                            def expectedHash = null
+                            def expectedHash = parts[0].trim()
                             def filename = parts[1].trim()
                             
                             // Calculate hash for each file except checksum.txt itself
@@ -66,15 +66,8 @@ pipeline {
                                 // Debugging output
                                 echo "Calculated Hash for ${filename}: ${calculatedHash}"
                                 
-                                // Find expected hash for the current file
-                                checksumFile.each { line ->
-                                    if (line.startsWith("${filename}:")) {
-                                        expectedHash = line.split(":")[1].trim()
-                                    }
-                                }
-                                
                                 // Compare hashes
-                                if (expectedHash && expectedHash == calculatedHash) {
+                                if (expectedHash == calculatedHash) {
                                     echo "Hash verification successful for ${filename}!"
                                 } else {
                                     error "Verification failed: Hash mismatch for ${filename}. Expected: ${expectedHash}, Calculated: ${calculatedHash}"
@@ -86,7 +79,7 @@ pipeline {
             }
         }
 
-        stage('Validation message') {
+        stage('Validation Message') {
             steps {
                 echo "Job executed as expected."
             }
