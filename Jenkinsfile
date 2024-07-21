@@ -67,8 +67,8 @@ pipeline {
                     }
                         
                     // Read calculated hashes
-                    def actualModelHash = sh(script: "cat ${PWD}/model_weights.json.sha256 | cut -d' ' -f1", returnStdout: true).trim()
-                    def actualOutputHash = sh(script: "cat ${PWD}/control_output.txt.sha256 | cut -d' ' -f1", returnStdout: true).trim()
+                    def actualModelHash = sh(script: "cat ${PWD}/model_weights.json.sha256 | cut -d'  ' -f1", returnStdout: true).trim()
+                    def actualOutputHash = sh(script: "cat ${PWD}/control_output.txt.sha256 | cut -d'  ' -f1", returnStdout: true).trim()
                         
                     // Compare hashes
                     if (actualModelHash == expectedModelHash && actualOutputHash == expectedOutputHash) {
