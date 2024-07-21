@@ -52,8 +52,8 @@ pipeline {
                     def checksumFile = readFile("${PWD}/checksum.txt")
                     
                     // Read each line in checksum file and store hash values
-                    checksumFile.readLines().each { line ->
-                        def parts = line.split()
+                    checksumFile.readLines().each { checksumLine ->
+                        def parts = checksumLine.split()
                         if (parts.size() >= 2) {
                             def expectedHash = null
                             def filename = parts[1].trim()
@@ -69,7 +69,7 @@ pipeline {
                                 // Find expected hash for the current file
                                 checksumFile.each { line ->
                                     if (line.startsWith("${filename}:")) {
-                                        expectedHash = line.split(":")[0].trim()
+                                        expectedHash = line.split(":")[1].trim()
                                     }
                                 }
                                 
