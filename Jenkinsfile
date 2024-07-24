@@ -95,7 +95,13 @@ pipeline {
                                 }
                             }
                         } else {
-                            error "Missing hash or filename in checksum file: ${checksumFile}"
+                            if (parts.size() == 0) {
+                                error "Hash is missing in checksum file: ${checksumFile}"
+                            } else if (parts.size() == 1) {
+                                error "Filename is missing in checksum file: ${checksumFile}"
+                            } else {
+                                error "Corrupted line in checksum file: ${checksumFile}"
+                            }
                         }
                     }
                 }
