@@ -7,7 +7,7 @@ version_info:
       name: "abc_model_v1.1.json"
       version: "1.1.0"
       date: "2024-06-02"
-      path: "s3://pnc-trial/corrupted_values.tar"
+      path: "s3://pnc-trial/same_name_value.tar"
       md5: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       description: "The trained model file in the cloud environment."
     onprem_model:
