@@ -47,7 +47,7 @@ pipeline {
                         tar -xvf ${PWD}/${tarball_name} -C ${PWD}
                     """
                     
-                    def checksumFile = readFile("${PWD}/checksum.txt")
+                    def checksumFile = "${PWD}/checksum.txt"
 
                     // Check if checksum.txt exists
                     if (!fileExists(checksumFile)) {
