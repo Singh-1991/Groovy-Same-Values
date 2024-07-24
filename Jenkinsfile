@@ -42,27 +42,48 @@ pipeline {
                     // Ensure PWD is correctly defined within the container
                     def PWD = sh(script: "echo \$(pwd)", returnStdout: true).trim()
                     
-                    // Untar the tarball and calculate sha256 hashes
+                    // Untar the tarball.
                     sh """
                         tar -xvf ${PWD}/${tarball_name} -C ${PWD}
                     """
                     
-                    // Calculate and compare SHA256 hashes directly
-                    def calculatedHashes = [:]
                     def checksumFile = readFile("${PWD}/checksum.txt")
-                    
-                    // Read each line in checksum file and store hash values
+
+                    // Check if checksum.txt exists
+                    if (!fileExists(checksumFile)) {
+                        error "Missing checksum file: ${checksumFile}"
+                    }
+
+                    // Read checksum file contents
+                    def checksumContent
+                    try {
+                        checksumContent = readFile(checksumFile)
+                    } catch (Exception e) {
+                        error "Failed to read checksum file: ${checksumFile}"
+                    }
+
+                    // Validate checksum file format and hash values
+                    def calculatedHashes = [:]
                     checksumFile.readLines().each { checksumLine ->
                         def parts = checksumLine.split()
                         if (parts.size() >= 2) {
                             def expectedHash = parts[0].trim()
                             def filename = parts[1].trim()
                             
+                            // Validate hash format
+                            if (!expectedHash.matches(/[a-fA-F0-9]{64}/)) {
+                                error "Corrupted checksum file: ${checksumFile}"
+                            }
+                                
                             // Calculate hash for each file except checksum.txt itself
                             if (!filename.endsWith("checksum.txt")) {
+                                def fileToHash = "${PWD}/${filename}"
+                                if (!fileExists(fileToHash)) {
+                                    error "Missing file: ${filename} expected in checksum file."
+                                }
                                 def calculatedHash = sh(script: "sha256sum ${PWD}/${filename} | awk '{print \$1}'", returnStdout: true).trim()
                                 calculatedHashes[filename] = calculatedHash
-                                
+                            
                                 // Debugging output
                                 echo "Calculated Hash for ${filename}: ${calculatedHash}"
                                 
@@ -73,12 +94,14 @@ pipeline {
                                     error "Verification failed: Hash mismatch for ${filename}. Expected: ${expectedHash}, Calculated: ${calculatedHash}"
                                 }
                             }
+                        } else {
+                            error "Missing hash or filename in checksum file: ${checksumFile}"
                         }
                     }
                 }
             }
         }
-
+    
         stage('Validation Message') {
             steps {
                 echo "Job executed as expected."
